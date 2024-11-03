@@ -1,2 +1,2 @@
-# ai_devs
-Projects developed during ai_devs3 course
+# `AI_devs`
+Projects developed during `AI_devs3` course
