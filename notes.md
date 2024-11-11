@@ -62,3 +62,10 @@ Dane testowe do optymalizacji promptu i systemu
             - nietypowe zapytania, itd
             - triggery na podstawie metryk ewaluacyjnych - zintegrowane jako np. webhook
 - ewaluacja i testowanie przygotowuje model na niespodziewane wydarzenia w środkowisku produkcyjnym
+
+Aplikacje produkcyjne
+- wyszukiwarki w formie baz wektorowych
+    - Dane w bazie wektorowej przechowywane są w formie embeddingu oraz powiązanych z nimi metadanych. Embedding generowany jest przez model i wybranego modelu nie można zastąpić innym bez ponownego indeksowania całej bazy. 
+    - modele generujące embedding mają różną skutecznośc w zależności od języka
+    - warto w związku z tym stosować kilka sposobów opisywania danych. jednak to utrudnia akutalizację, wyszukiwanie i synchronizację danych
+- warto tworzyć warstwę abstrakcji, która pozwala na korzystanie z kilku różnych modeli
