@@ -69,3 +69,31 @@ Aplikacje produkcyjne
     - modele generujące embedding mają różną skutecznośc w zależności od języka
     - warto w związku z tym stosować kilka sposobów opisywania danych. jednak to utrudnia akutalizację, wyszukiwanie i synchronizację danych
 - warto tworzyć warstwę abstrakcji, która pozwala na korzystanie z kilku różnych modeli
+
+## Przetwarzanie audio
+- dane wejeściowe nie mogą być zbyt długie: możliwe, że plik audio trzeba skompresować lub podzielić na części
+- fragmenty ciszy są błędnie interprettowane, i często model odpowiada zdaniami takimi jak "Dziękuję za uwagę" - warto unikać takich fargmentów [Whisper speech to text]
+- text to speech: nadal dużym wyzwaniem pozostaje przetwarzanie istniejących treści, takich jak tłumaczenie filmów, ze względu na potrzebę synchronizacji dźwięku z oryginalną ścieżką
+- text to speech nadal niemożliwe jest wpływanie na intonację czy sposób wymowy
+- format `wav` pozwala na dzielenie nagrania na części, istnieje także `.ogg`, który dzięki kompresji pozwoliłby nam na zmniejszenie rozmiaru przesyłanych danych
+- praca z modelem `Whisper` - kluczowe jest dzielenie nagrania na fragmenty
+- warto poda wiadomość systemową modelowi z szerszym kontekstem, tak aby poprawnie interpretował wiadomości głosowe
+
+nagrywanie dźwięku
+- jakość audio: możliwość zweryfikowanie nagranego dźwięku przez użytkownika
+- cisza: dynamiczne wykrywanie ciszy - wówczas nagranie jest zatrzymywane. Technika te może być również wykorzystana do przerwania wypowiedzi aystenta
+- kontekst: ważne jest uzwględnienie słów kluczowych w transkrypcji
+- potwierdzenie: elementy pozwalające na potwierdzenie wykonania akcji, np. przycisk lub komenda głosowa
+- korekta: możliwość poprawy transkrypcji przez model w celu poprawienia formatowania i błędów
+
+optymalizacja generowanego dźwieku
+- możliwość przełączenia się na `groq`i skorzystanie z usługi EvlevenLabs z modelem "turbo"
+  - szybszy czas reakcji
+- zmiana formatu dźwięku z `.wav` na `.ogg` - pozwala na zmniejszenie rozmiaru pliku
+- zastosowanie strumieniowania
+- zwracanie odpowiedzi fragmentami do modelu Text-to-Speech, który umoliwia strumieniowanie generowanego nagrania
+  - redukowanie czasu reakcji
+- równoległe wykonywanie akcji, które nie są zależne od siebie
+- zastosowanie mniejszych modeli i/lub korzystanie z platform oferujących szybką inferencję
+- skrócenie wypowiedzi modelu
+- Zastosowanie platform takich jak Hume.ai czy Bland.ai w sytuacji gdy zależy nam na budowaniu interfejsów umożliwiających rozmowy z LLM
