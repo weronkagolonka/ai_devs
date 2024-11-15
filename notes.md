@@ -137,3 +137,41 @@ Ograniczenia VLM (Visual Language Model):
 Obecnie warto patrzeć na VLM jako narzędzie do **ogólnego zrozumienia obrazów** z pominięciem szczegółów
 
 Open Source - model Mistral dostępny przez API i na Hugging Face
+
+## Generowanie i modyfikacja obrazów
+
+- im bardziej złożony prompt, tym mniejsze prawdopodobieństwo, że model zwróci obraz zgodny z oczekiwaniami
+
+API do generowania obrazów:
+- Leonardo.ai
+- Replicate
+
+Midjourney
+- bardzo dobra jakość, ale niska sterowność
+- brak oficjalnego API (wrappery mogą doprowadzić do zablokowania konta)
+
+- przydatne jest posługiwanie się szablonami do generowania obrazów
+  - przydatne w marketingu do generowania reklam, okładek arykułów bloga/neswlettera
+- prompty mogą zawierać zarówno instrukcje tekstowe jak i grafiki referencyjne
+  - pozwala na zachowanie spójności stylu
+
+ComfyUI
+- interfejs do sterowania meta promptami, nadawnia stylu, stosowania obrazów referencyjnych
+
+inne metody manipulacji obrazów, które mogą być używane z VLM:
+- zwiększenie skali obrazu z ograniczonym zachowaniem detali'\
+- zwiększanie skali z powiększeniem kadru
+- automatyczne usuwanie tłą, uwzględniając włosy, krople, cienie, itd.
+- usuwanie wybranych elementów ze zdjęć, zamianę oraz łączenie kilku zdjęć
+- generowanie spójnych obrazów, zgodnych z brandingiem
+- wykorzystanie istniejących grafik do automatycznego generowania wielu formatów
+- wizualizacje na podstawie grafik referencyjnych
+- animacje grafik do wideo
+
+prompt
+- raczej słowa kluczowe i flagi sterujące ustawieniami niż pełne instrukcje
+  - shiny, dark, warm weather, natural lighting, itd.
+- rekomendacja midjourney: krótkie prompty, minimum informacji opsiujących oczekiwany wynik
+  - nie zawsze jest to prawda
+- można wykorzystać model do przeredagowania promptu na bardziej precyzyjny
+- wykorzystywanie placeholderów pzy reużywaniu promptu do generowania nowych grafik z np. innymi postaciami, ale w tym samym stylu
