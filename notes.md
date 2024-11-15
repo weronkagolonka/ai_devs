@@ -97,3 +97,43 @@ optymalizacja generowanego dźwieku
 - zastosowanie mniejszych modeli i/lub korzystanie z platform oferujących szybką inferencję
 - skrócenie wypowiedzi modelu
 - Zastosowanie platform takich jak Hume.ai czy Bland.ai w sytuacji gdy zależy nam na budowaniu interfejsów umożliwiających rozmowy z LLM
+
+## Przetwarzanie obrazu
+Z użyciem algorytmów, bez AI:
+1. Wykrywanie krawędzi obrazu
+2. Wykrywanie ruchu - identyfikacja zmian pomiędzy kolejnymi klatkami
+3. Znajdowanie konturów - liczenie obiektów na obrazie, np ludzie w sklepie
+
+rozmycie - gaussian blur pomaga w lepszym wykrywaniu krawędzi
+słabe oświetlenie - poprawianie wartości progowych celem redukcji szumu
+niższa rozdzielczość - szybsza praca algorytmów
+
+złożone zadania wymagające "zrozumienia" obrazu: algorytmy przatwarzania obrazu mogą być niewystarczające
+
+techniki promptowania takie jak `Few-Shot`, `Chain of Thought` czy `Self-Consistency` mogą również być używane z VLM
+
+można wykorzystywać zwroty takie jak:
+- you have perfect vision
+- take a closer look
+zwiększają one szanse na to, że zadanie zostanie zrealizowane poprawnie
+
+- oznaczenie treści, wykadrowanie obrazu ma znaczenie dla odpopwiedzi modelu
+  - np. obramowanie istotnych elementów na obrazie
+- dostarczając kontekst do zapytania, można również użyć kolejnego obrazu, nie tylko tekstu
+  - kontekst - np. opis osoby, którą należy znaleźć na obrazku
+  - potencjalny case - klasyfikacja obrazów
+
+Ograniczenia VLM (Visual Language Model):
+- trudność z rozpoznawaniem przecinających się kształtów
+- problemy ze zdolnością do poruszania się po szachownicy
+- rozpoznawanie kolorów ze zwróceniem faktycznej palety, np. HEX - lepsze tu są metody programistyczne
+- określenie rozmiaru obrazka, odległości między obiektami, czy ich dokładnej lokalizacji
+- nieumiejetność rozpoznawania rzeczy, które wychodzą poza bazę wiedzy modelu
+- wrażliwe na prompt injection - wstrzykiwanie złośliwych danych w celu zmanipulowania modelu
+- mimo ogólnie dobrego rozpoznawania tesktu, zdarzają się rażące błędy
+- dwuznaczność zapytania obniża jakość wypowiedzi
+- publiczne VLM są ograniczane pod kątem możliwości rozpoznawania znanych osób
+
+Obecnie warto patrzeć na VLM jako narzędzie do **ogólnego zrozumienia obrazów** z pominięciem szczegółów
+
+Open Source - model Mistral dostępny przez API i na Hugging Face
