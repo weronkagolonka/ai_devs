@@ -19,9 +19,6 @@ const main = async () => {
         openAiService
     )
 
-    // report 12 sektor a1 - should be other, no people are present
-    // report 11 sektor c3 - should be other, it is not about captured people
-
     const unzippedData = await reportService.downloadAndUnzip()
     const sortedData = await reportService.classifyReports(unzippedData)
     console.log(sortedData)
