@@ -175,3 +175,35 @@ prompt
   - nie zawsze jest to prawda
 - można wykorzystać model do przeredagowania promptu na bardziej precyzyjny
 - wykorzystywanie placeholderów pzy reużywaniu promptu do generowania nowych grafik z np. innymi postaciami, ale w tym samym stylu
+
+## Połączenie wielu formatów
+
+# generowanie treści
+  - dobrzre sprawdza się podsumowanie treści
+stosowanie modelu mentalnego
+- First-principles Thinking - a method of problem-solving that involves breaking down complex issues into their most basic and fundamental parts.
+
+- modele obecnie mają trudności z wykonywaniem złożonych zadań w ramach jednego zapytania. Skupienie na jednej aktywności może podnieść skutecznośc do nawet 100%
+- przetwarzany tekst może byc analizwoany wielokrotnie po różnym kątem. Pozwala to na zgromadzenie wysokiej jakości kontekstu, na podstawie którego można wykonać zadanie
+- warto rozważyc kroki, w których generowana treść jest poddawana krytyce lub weryfikacji pod kątem naszych wymagań. Pozwala to wyeliminować błędy
+- finalne podsumowanie - docelowa struktura oraz komplet informacji. Warto dodatkowo zwrócić uwagę na stylizację treści, gdyż modele stosują domyślnie mało precyzyjny styl wypowiedzi
+- wymieione kroki nie muszą być wykonywane przez jeden model, wskazane jest łączenie różnych modeli - od mniejszych, tańszych do tych większych
+
+# opisywanie obrazu
+- model nie może podejrzeć linku z obrazem, dlatego należy go pobrać i przesłać w formie base64
+- podobnie jak w podsumowanie tekstu, potrzebny jest dodatkowy kontekst do wygenerowania wartościowego opisu
+  - podgląd obrazu, treść, która go otacza
+
+# analiza materiałów wideo
+- dostępna w modelu gemini 1.5 pro
+- opisywanie wideo jest podobne do pisywania obrazów
+- należy jednak zwrócić uwagę na liczbę tokenóœ, która dla jednominutowego materiału wynosci 18 000
+
+model gemini oferuje możliwość wykorzystania pamięci podręcznej dla kontekstu, co dla wielokrotnego przerwarzania plików audio/wideo jest koniecznością
+
+# "autononiczna" współpraca modelów
+- obecnie łączenie modeli może być drogie (szczególnie tworzenie dźwięków - na ten moment potrzeba kilku modeli), 
+- obecnie jakość modeli text to audio jest niska
+- jednak w przyszłości zadanie to będzie prawdopodobnie o wiele prostsze z pomocą modeli multimodalnych, które są zdolen do generowanie dźwieku
+
+mixture of agents - modele open source współpracujące ze sobą, które są ws tanie osiągnąc lepsze rezultaty niż gpt-4o
