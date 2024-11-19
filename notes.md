@@ -178,7 +178,7 @@ prompt
 
 ## Połączenie wielu formatów
 
-# generowanie treści
+### generowanie treści
   - dobrzre sprawdza się podsumowanie treści
 stosowanie modelu mentalnego
 - First-principles Thinking - a method of problem-solving that involves breaking down complex issues into their most basic and fundamental parts.
@@ -189,21 +189,34 @@ stosowanie modelu mentalnego
 - finalne podsumowanie - docelowa struktura oraz komplet informacji. Warto dodatkowo zwrócić uwagę na stylizację treści, gdyż modele stosują domyślnie mało precyzyjny styl wypowiedzi
 - wymieione kroki nie muszą być wykonywane przez jeden model, wskazane jest łączenie różnych modeli - od mniejszych, tańszych do tych większych
 
-# opisywanie obrazu
+### opisywanie obrazu
 - model nie może podejrzeć linku z obrazem, dlatego należy go pobrać i przesłać w formie base64
 - podobnie jak w podsumowanie tekstu, potrzebny jest dodatkowy kontekst do wygenerowania wartościowego opisu
   - podgląd obrazu, treść, która go otacza
 
-# analiza materiałów wideo
+### analiza materiałów wideo
 - dostępna w modelu gemini 1.5 pro
 - opisywanie wideo jest podobne do pisywania obrazów
 - należy jednak zwrócić uwagę na liczbę tokenóœ, która dla jednominutowego materiału wynosci 18 000
 
 model gemini oferuje możliwość wykorzystania pamięci podręcznej dla kontekstu, co dla wielokrotnego przerwarzania plików audio/wideo jest koniecznością
 
-# "autononiczna" współpraca modelów
+### "autononiczna" współpraca modelów
 - obecnie łączenie modeli może być drogie (szczególnie tworzenie dźwięków - na ten moment potrzeba kilku modeli), 
 - obecnie jakość modeli text to audio jest niska
 - jednak w przyszłości zadanie to będzie prawdopodobnie o wiele prostsze z pomocą modeli multimodalnych, które są zdolen do generowanie dźwieku
 
 mixture of agents - modele open source współpracujące ze sobą, które są ws tanie osiągnąc lepsze rezultaty niż gpt-4o
+
+## Multimodalność
+
+- zamiana tekstu na formę audio - obiwązują limity danych wejściowych oraz wyjściowych
+- stworzenie promptu, który poradzi sobie z dopasowaniem stylu wypowiedzi
+  - prompt nie powinien wskazywać na generowanie treści na podstawie obecnej, lecz na jej transformację wg określonych zasad
+    - to pozwala na zachowanie spójności stylu
+- warto zwrócić uwagę na to, aby model zadbał o poprawną odmianę słów jeśli transformumemy tekst, który jest po polsku
+
+### Kontekst
+- klasyfikacja danych wejściowych
+  - przykład tworzenia notatek na podstawie nagrania audio - przypisanie kategorii pozwala na ustalenie kontekstu i np. zastosowanir odpowiedniego formatowania notatki
+  - notatki na podstawie obrazu - nadawanie kontekstu na podsatwie danych pochodząych z urządzenia, które utworzyło notatkę (np. lokalizacja, inne metadane)
