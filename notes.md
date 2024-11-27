@@ -87,7 +87,7 @@ nagrywanie dźwięku
 - korekta: możliwość poprawy transkrypcji przez model w celu poprawienia formatowania i błędów
 
 optymalizacja generowanego dźwieku
-- możliwość przełączenia się na `groq`i skorzystanie z usługi EvlevenLabs z modelem "turbo"
+- możliwość przełączenia się na `groq` i skorzystanie z usługi EvlevenLabs z modelem "turbo"
   - szybszy czas reakcji
 - zmiana formatu dźwięku z `.wav` na `.ogg` - pozwala na zmniejszenie rozmiaru pliku
 - zastosowanie strumieniowania
@@ -220,3 +220,49 @@ mixture of agents - modele open source współpracujące ze sobą, które są ws
 - klasyfikacja danych wejściowych
   - przykład tworzenia notatek na podstawie nagrania audio - przypisanie kategorii pozwala na ustalenie kontekstu i np. zastosowanir odpowiedniego formatowania notatki
   - notatki na podstawie obrazu - nadawanie kontekstu na podsatwie danych pochodząych z urządzenia, które utworzyło notatkę (np. lokalizacja, inne metadane)
+
+## Dokumenty
+
+- limity wynikajce z okna kontekstowego
+  - dzielenie materiału wejściowego na fragmenty - chunking. 
+  - ważne wówczas jest utzrymanie uwagi modelu na kontekście
+    - podążanie za instrukcjami, rozumienie treści - jest to wciąż wyzwaniem dla modeli
+
+**Dokument** to obiekt składający się z głównej treści oraz metadanych, które opisują jego cechy i nadają kontekst. 
+W kontekście LLM zwykle jest to mały fragment dłuższej treści z zewnętrznego źródła, 
+który dodajemy do indeksów silników wyszukiwania na potrzeby Retrieval-Augmented Generation lub innych scenariuszy wymagających odnalezienia konkretnych zestawów informacji.
+
+struktura metadanych:
+- info nt. żródła i dokumentów sąsiadujących
+- info pozwalające nakreślić kontekst (np. z jakiego pliku pochodzi dokument)
+- info pozwalające skutecznie filtrować dokumenty (data, rola, uprawnienia czy kategoria)
+- info pozwalające na kompresję treści dokumentu (np.linki)
+
+Zatem warto myśleć o dokumentach tak, że gdy budujemy je na podstawie jakiegoś pliku czy bazy danych,
+to musimy wygenerować je tak, aby model posiadał wystarczający kontekst na ich temat oraz aby silnik wyszukiwania mógł skutecznie do nich dotrzeć
+
+generowanie treści dokumentów:
+- text splitting
+- generowane przez model lub człowieka
+- LangChain: dzielenie na podstawie długości lub kolejnych znaków specjalnych 
+- recursive text splitting, dzielenie po akapitach, podwójnej linii, nowej linii, kropce, wykrzykniku, itd.
+  - mniejsze prawdopodobieństwo zgubienia kontekstu
+- techniki te przeciętnie się sprawdzają w praktyce
+- Ponoć zastosowanie "overlap" bywa skuteczne (nakładanie na siebie sporej częsci dokumentuów, np. 50%)
+
+sugestia anthropic celem utzrymania okontesktu dokumentów
+- każdy dokument należy przeprocesować przez LLM i prompt, który nada mu kontekts na podstawie całego dokumentu
+  - cache'owanie promptów jest tutaj istotne
+  - zastosowanie gemini pozwoli przetworzyć duże zestawy danych 
+
+### Nieustrukturyzowane dane
+
+- techniki podobne jak w multimodalności; połączeniu wielu formatów
+
+### Kategoryzacja i filtrowanie
+
+- wyszukiwanie wygenerowanych dokumentów na podstawie zbliżonego opisu
+  - ograniczanie liczby zwracanych wyników
+  - precyzyjne zapytanie celujące w konkretne dokumenty daje wyższą skuteczność, o ile opisy narzędzi są wystarczająco dobre
+  - nieprecyzyjne zapytanie - gorsza skuteczność + ograniczenie liczby wyników
+- ważne są kategorie i tagi, które pomagają w przypadku nieprecyzyjnych zapytań
