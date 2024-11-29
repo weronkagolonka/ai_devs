@@ -266,3 +266,75 @@ sugestia anthropic celem utzrymania okontesktu dokumentów
   - precyzyjne zapytanie celujące w konkretne dokumenty daje wyższą skuteczność, o ile opisy narzędzi są wystarczająco dobre
   - nieprecyzyjne zapytanie - gorsza skuteczność + ograniczenie liczby wyników
 - ważne są kategorie i tagi, które pomagają w przypadku nieprecyzyjnych zapytań
+
+## Wyszukiwanie semantyczne
+
+bazy wektorowe
+- qdrant
+- [przegląd](https://benchmark.vectorview.ai/vectordbs.html) dostępnych rozwiązań
+
+model do embeddingu
+- jina-embeedings-v3
+- text-embedding-3-large (start)
+
+określenie struktury kolekcji i zawartych w niej dokumentów
+
+- bardzo ważny element procesu łączenia LLM z zewnętrznymi danymi, od tego zależy jakośc wypowiedzi
+- jednak osiągnięcie 100% precyzji obecnie nikomu się nie udało
+  - spodziewane błędy na poziomie 3-6%
+  - duża ilość danych utrudnia precyzyjne wyszukiwanie: wprowadza szum (noise)
+- istotna jest strategia wyszukiwania łącząca różne podejścia
+  - embedding, bm25, contextual embedding, contextual bm25
+- embedding -> sposób reprezentacji danych za pomocą liczb, które mają opisać ich znaczenie na 
+  - embedding jest nieodwracalny
+  - oryginalne informacje muszą być przechowywane, ponieważ nie mamy możliwości odzyskania ich z embeddingu; najlepiej nie tylko w bazie wektorowej
+  - jeśli dane są potrzebne tylko do wyszukiwania, należy je synchornizować, przynajmniej częściowo między klasyczną bazą danych a wektorową
+    - rekordy muszą mieć wspólny identyfikator
+    - aplikacja musi uzwględniać spójność danych
+- potrzeby analizy i wyszukiwania
+  - przechowywane w formie obiektów łączących ze sobą embedding i metadane
+  - obiekty są nazywane punktami/dokumentami, są przechowywane w bazie wektorowej, która jest silnikiem wyszukiwania
+- wzbogacenie danych o opisy pozwala na lepsze kojarzenie i kategoryzowanie
+- w zależności od modelu wykorzystywanego do embeddingu, będziemy się posługiwać inna liczbą wymiaróœ i ta liczba będzie stała dla całej kolekcji
+- przykład: dimensions=1024, vector składa się z 1024 liczb zarównbo dla dokumentuy zawierającego jedno słowo jak i takiego, który zawiera kilkanaście zdań - tyle samo przestrzeni na opisanie
+
+zapytanie do bazy wektorowej
+1. zamiana na embedding
+2. zestawienie z przechowywanymi danymi w kolekcji
+3. metadane służą do filtrowania na etapie wyszukiwania
+
+- powinno się mieć jedną kolekcje na jedną aplikację
+- jedna baza danych dla jednej aplikacji
+- baza wektorowa może przechowywać wektory opisujące zarówno tekst jak i obrazy
+  - proces wyszukiwania wygląda tak samo, jednak należy unikać wyszukiwania dwóch rodzajów treści jednocześnie
+
+zasady
+1. każdy dokument ma swój unikalny identyfikator (UUID)
+2. dokumenty powinny być synchronizowane z bazą danych
+3. metadane muszą posiadać właściwości pozwalające zawężenie wyszukiwania
+4. filtry mogą być ustawiane programistycznie i/lub przez model
+5. metadane mogą posiadać właściwości określające ich dostępność (rola/subskrypcja)
+6. treść dokumnetów powinna być możliwie monotematyczna, aby opisanie jej znaczenia pozwoliło na przyszłe dopasowanie do zapytań
+7. długośc dokumentu nie może przekraczać limity kontekstu modelu do embeddingu oraz modelu, który będzie przetwarzał jego treść (zarówno input jak output context limit)
+8. zapytanie użytkownika może być wzbogacane, rozszerzane lub doprecyzowywane w celu zwiększenia pradwoopodobieństwa dotarcia do istotnych dokumentów
+9. zwrócone dokumenty mogą zostać ocenione przez model pod kątem ich przydatności dla zapytania (re-rank)
+
+### Naive RAG
+ - dzielenie dużej treści na mniejsze fragmenty, indeksowanie, oraz późniejsze wyszukiwanie na podstawie oryginalnego zapytania użytkownika
+ - problem: oryginalne zapytanie nie zawsze wystarcza do poprawnego odnalezienia danych
+
+Poprawienie precyzji wyszukiwania
+- np. zawarcie nazwy autorów w danych zawierającyh cytaty z ich książek: dodaje filtr 
+  - dodanie klasyfikacji zapytania pod kątem autora: dodanie filtru dla przeszukiwaniych dokumentów
+
+Problem: zapytanie wymagające użycia kilku dokumentów
+- narzucenie limitu dokumentów - nie jest wystarczające
+- solution: zaangażowanie modelu to przeanalizowania czy dokument jest istotny czy nie (re-rank)
+  - zwróćenie większej ilości dokumentów i oceninie przez model, które są najbardziej przydatne
+- wzbogacenie/transformacja: zapytanie może być na tyle nieprecyzyjne, że ciężko ustalić o co w nim chodzi. Model może poprawić jakość zapytania
+
+### Ograniczenie zastosowania LLM
+
+Why?
+- spowolnienie logiki aplikacji
+- czasem nie potrzebujemy rozumowania, ale język naturalny nie pozwala na zakodowanie logiki
