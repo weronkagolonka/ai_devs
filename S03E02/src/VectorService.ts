@@ -37,16 +37,6 @@ export class VectorService {
     async queryVectors(vector: number[], limit: number = 1) {
         const response = await this.qdrantClient.query(this.collectionName, {
             query: vector,
-            // filter: {
-            //     must: [
-            //         {
-            //             key: "date",
-            //             match: {
-            //                 value: fileDate,
-            //             },
-            //         },
-            //     ],
-            // },
             limit: limit,
             with_payload: true,
         });
