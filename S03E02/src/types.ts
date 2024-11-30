@@ -1,5 +1,3 @@
-import { UUID } from "crypto";
-
 export type ReportAnswerRequest = {
     task: string;
     apikey: string;

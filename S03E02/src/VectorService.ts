@@ -1,6 +1,5 @@
 import { QdrantClient } from "@qdrant/qdrant-js";
 import { Point } from "./types";
-import { match } from "assert";
 
 export class VectorService {
     private qdrantClient: QdrantClient;
