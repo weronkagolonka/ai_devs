@@ -34,4 +34,9 @@ export const globalConfig = cleanEnv(process.env, {
 
     // S03E03
     DB_API_URL: str(),
+
+    // S03E04
+    SEARCH_PEOPLE_URL: str(),
+    SEARCH_PLACES_URL: str(),
+    BARABARA_DATA_URL: str(),
 });
