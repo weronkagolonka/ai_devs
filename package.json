@@ -1,0 +1,52 @@
+{
+    "name": "ai_devs",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "type": "module",
+    "scripts": {
+        "polygon": "npx tsx polygon/index.ts",
+        "S01E01": "npx tsx S01E01/index.ts",
+        "S01E02": "npx tsx S01E02/index.ts",
+        "S01E03": "npx tsx S01E03/index.ts",
+        "S01E04": "npx tsx S01E04/index.ts",
+        "S01E05": "npx tsx S01E05/index.ts",
+        "S02E01": "npx tsx S02E01/index.ts",
+        "S02E02": "npx tsx S02E02/index.ts",
+        "S02E03": "npx tsx S02E03/index.ts",
+        "S02E04": "npx tsx S02E04/index.ts",
+        "S02E05": "npx tsx S02E05/index.ts",
+        "S03E01": "npx tsx S03E01/index.ts",
+        "S03E02": "npx tsx S03E02/index.ts",
+        "S03E03": "npx tsx S03E03/index.ts",
+        "S03E04": "npx tsx S03E04/index.ts",
+        "S03E04-server": "npx tsx S03E04/server.ts",
+        "S03E05": "npx tsx S03E05/index.ts"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "devDependencies": {
+        "@types/body-parser": "^1.19.5",
+        "@types/express": "^5.0.0",
+        "@types/node": "^22.9.0",
+        "tsx": "^4.19.2",
+        "typescript": "^5.6.3"
+    },
+    "dependencies": {
+        "@qdrant/qdrant-js": "^1.12.0",
+        "@types/decompress": "^4.2.7",
+        "@types/unzipper": "^0.10.10",
+        "body-parser": "^1.20.3",
+        "decompress": "^4.2.1",
+        "dotenv": "^16.4.5",
+        "envalid": "^8.0.0",
+        "express": "^4.21.1",
+        "openai": "^4.71.1",
+        "unzipper": "^0.12.3",
+        "cheerio": "^1.0.0",
+        "path": "^0.12.7",
+        "ollama": "^0.5.9",
+        "mathjs": "^13.2.1"
+    }
+}

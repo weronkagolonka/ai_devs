@@ -490,3 +490,136 @@ LLM
 -   uniwersalne systemy RAG próbujące się dopasować do dowolnego rodzaju danych są jeszcze poza naszym zasięgiem
     -   jeśli wysoka skuteczność jest ważna
 -   ogromną rolę pełnią elementy wspierające proces wyszukiwania, takie jak wzbogacanie zapytań, ocenianie rezultatów przez model
+
+## Źródła danych
+
+dane wrażliwe
+
+-   model może "nauczyć się" ich i je upublicznić
+    -   np. wygenerować dokumenty, zasugerować dane poufne, itd.
+-   uczenie LLMów
+    -   zabezpieczanie danych tak aby ich nie ujawnił
+
+model powinine mieć jak najmniejszy kontakt ze światem zewnętrznym poprze programistyczne ograniczenia - np. gdy model tworzy mail, powinien to byuć draft, który ma byc zatwierdzony przez użytkownika przed wysłaniem - limitowanie domen, które mogą być przeszukane lub scrapowane
+
+### zabezpieczanie danych
+
+    -   filtrowanie danych wejściowych z danych wrażliwych
+        -   narzędzia NLP do wykrywania danych wrażliwych, np. nr telefonu, adres i zamiana na neutralne hasła
+            - generowanie denychb testowych w `promptFoo`
+        -   prywatność różnicowa - dodawanie szumu do danych
+            -   np. model uczy się trendów zakupowych, ale nie wie kto konkretnie co kupił
+            -   zabezpieczenie przed odtworzeniem indywidualnych danych zapytaniami statystycznymi
+        -   confidential computing
+            -  enklawy - zamknięte przestrzenie w procesorze/systemie operacyjnym, które nie udostępniają danych wrażliwych
+            -  izolowanie na poziomie sprzętowym; wyłącznie model widzi przetwarzane informacje
+            -  rozwijane przez np. Nvidię
+            -  zabezpiecza przed atakami na system operacyjny lub przejęcie serwera
+               -  dane mogą być niedostępne nawet dla pracowników wewnętrznych
+         -  maskowanie danych
+            -  zastępowanie danych wrażliwych tzw. maskami - wyglądają jak rzeczywiste dane, ale nie ujawniają ich rzeczywistej wartości
+
+### monitoring - śledzenie i reakcja oprócz działań prewencyjnych
+
+    -  logowanie i audyt
+      - kto miał dostęp, kiedy i co zrobił
+      - w razie incydentu umożliwia identyfikacje co stało się z danymi
+      - czy dostęp do danych był zgodny w polityką bezpieczeństwa?
+    - anomaly detecyion
+      - wyłapywanie nietypowych wzorców
+        - np. do systemu trafiają dane o nietypowej strukturze
+        - zdane wejściwe są zbyt specyficzne
+      - alert przed rozpoczęciem przetwarzania danych
+      - wykrywanie jail brake'ów
+    - traceability
+      - śledzenie danych od momentu ich wprowadzenia do systemu aż do ich przetworzenia
+      - oznaczenie metadanaymi pozwalający na prześledzenie prztewarzania
+      - czy były zastosowane zabezpieczenia podczas przetwarzania?
+
+### disaster handling
+
+reagowanie na incydenty - nieodzwony element zarządzania ryzykiem
+
+    -   model zdołał "nauczyć  się" danych wrażliwych
+        -  należy je usunąć - "REDAKCJA"
+           -  re-training na danych zastępczych, fine-tuning celem pozbycia się wrażliwych danych
+           -  re-training ma "przykryć"/"nadpisać" ujawnione dane bez konieczności kasowania modelu
+        -  transparentność - ekstremalne podejście
+           -  informowanie o incydentach, wykorzystywanie do dalszych badań do zapobiegania incydentom w przyszłości
+        -  informacje mogą nadal się pojawiać nawet po oczyszczeniu modelu
+           -  prompt filtering - blokowanie zapytań, które mogą prowadzić do ujawnienia danych
+           -  model, który przeszedł incydent może dalej zawierać śladowe ilości danych wrażliwych
+        - pełna regeneracja modelu
+          - gdy wyciek dotyczył dużego zakresu danych
+          - ponowny trening z zabezpieczonymi danymi
+
+Zabezpieczenia muszą ewoluować wraz z rozwojem technologii
+Audyt musi być regularny - jak przegląd w samochodzie, nawet gdy wszystko działa na pierwszy rzut oka, trzeba sprawdzić czy nie ma usterek
+
+### Praca z plikami i katalogami
+
+pliki wczytywane do kontekstu LLM powinny być zapisywane także na dysku (sam plik) oraz w bazie danych (info nt. pliku)
+
+-   dane mogę okazać się przydatne w przyszłości
+-   proces przetwarzania może składać się z wielu kroków
+-   wgrane pliki powinny być podzielone na kategorie
+-   struktura katalogów powinna uwzględniać
+    -   datę utworzenia - aby uniknąć mnóstwa plików w jednym folderze
+    -   uuid pliku - uniknięcie przypadkowego nadpisania istniejącego dokumentu
+    -   warto zachować oryginalną nazwę pliku zarówno na dysku jak i w db
+    -   treść plików warto przechowywać na podstawie mime-type, a nie samej nazwy (o ile nie mowa o pliku tesktowym)
+    -   pliki tymaczowe należy usuwać tak szybko, jak to możliwe
+-   rekord w DB opisujący plik, szczególnie o złożonej strukturze jak `.xlsx`, może zawierać linki do zrzutów ekranu, co może pozwolić modelowi na wizualne podejrzenie jego zawartości - w tym przypadku struktury tabeli czy diagramów
+
+### Wczytywanie plików
+
+-   tekst, audio, obrazy - stotunkowo prosty proces wczytywania
+-   problem: duże pliki, duża liczba plików, lub to i to; złożone formaty takie jak `.pdf`, `.docx`, `.xlsx`
+    -   możliwośći dotarcia do treści różnią się od języka programowania
+    -   istnieje wiele narzędzi pozwalających na konwersję formatów `.xlsx` -> `.docx/.csv` -> `HTML`
+        -   wiekszość jednak nie radzi sobie ze strukturam
+
+Przykładowe wczytywanie plików
+
+-   `.txt`: wczytanie zawartości i zamieniane na dokument, ewnetualnie podzielony na fragmenty
+-   `.docx, .xlsx`: wgrywane na Google Drive, następnie pobierane w formie `HTML` lub `CSV` i prztewarzane na markdown. Dodatkowo pobierane są w formacie `.pdf`, którego strony zamieniane są na `jpg` (zrzuty ekranu)
+-   `.pdf`: najbardziej problematyczny - zrzuty ekranu i pobranie treści, jeśli to możliwe
+-   `audio`: wykrywanie ogólnego poziomu ciszy, następnie segmentowanie na fragmenty ciszy i fragmenty w których ktoś mówi. Dzielenie pliku na kawałki, uzwględniając bufor na początku i końcu każdego fragmentu. Pliki są zamieniane an format `.ogg` (bardzo optymalny) i poddawane transkrypcji przez OpenAI Whisper
+-   `obrazy`: przeprocesowanie przez VLM celem uzyskania tesktowej formy obrazu
+
+utworzone dokumenty są wczytywane do bazy danych oraz kontekstu
+
+### Proxy dla zewnętrznych API
+
+-   czasem dane LLM nie pochodzą z pliku, ale zewnętrznej usługi, np. Notion
+    -   można łączyć się bezpośrednio z usługą, jednak warto rozwinąć własne proxy między agentem a usługą
+        -   większa elastyczność, możliwość dopasowania formatu odpowiedzi, błędów, połaczenia ze sobą różnych narzędzi
+        -   cache'owanie?
+
+### strony WWW
+
+-   dokumentem mogą też być strony WWW
+    -   wykorzystanie FireCrawl do pobierania treści ze stron (który przetwarza treść strony na format dokumentów i będzie ona gotowa do pracy z LLM, a także zapisana do markdown)
+
+### zapamiętywanie informacji od użytkownika
+
+-   sama interakcja z LLM może być źródłem danych oraz dane pochodzące od użytkownika i modelu
+    -   taka interakcja jest zwykle wielopoziomowa i "przepisywanie" treści za każdym razem nie ma sensu
+    -   wyposażenie modelu w możliwość zapisania treści pliku tak, aby w dalszych krokach posługiwał się wyłącznie identyfikatorem
+        -   np. model posiada informacje nt. dłuższego dokumentu wraz z instrukcją by w razue potrzeby cytowania zawartośći dokumentu, powinien korzystać z placeholder'a (uuid). Później możemy programistycznie zastąpić placeholder treścią dokumentu, która bedzie przekazana do kolejnego promptu, albo zwrócona użytkownikowi
+    -   model powinien móc odczytać i zapisywać pliki
+    -   model powinien móc ten plik udostępniać i uzyskać jego adres URL na potrzeby dalszej pracy
+    -   model powinien móc posługiwać się identyfikatorem/placeholderem pliku dzięki którym nie będzie konieczne przpisywanie długich treści (co może być niemożliwe ze względu na limity kontekstu)
+    -   praktycznie każdy rodzaj danych na których pracuje model, powinien być sprowadzony do jednego formatu, wspólnego dla wszystkich rodzajów treści
+
+### Organizowanie danych w DB
+
+możliwe scenariusze:
+
+-   połączenie dokumentu z użytkownikiem z zablokowaniem dostępu do jego treści innym użytkownikom
+-   połączenie dokumentu z konewrsacją, umożliwiające przywołanie kontekstu w razie wznowienia rozmowy
+-   połączenie dokumentu z zadaniem realizowanym przez agenta i/lub etapem większego procesu, na wypadek koniecznośći wznowienia go
+-   zapisywanie fragmentów przeprocesowanej treści, np. tłumacząć długo dokument, zapisujemy ukończone fragmenty tak, aby móc wznowić proces w miejscu, w którym pojawił się problem
+-   zapisywanie oryginalnej treści dokumentu oraz jego zmienionych form na wypadek potrzeby odwołania się do niej lub powtórzenia procesu przetwarzania
+-   zapisywanie info o dacie wygaśnięcia dokumentu, szczególnie w przypadku plików udostępnionych pod publicznym adresem URL
+-   powiązanier wpisu w DB z zawartościa pliku na dysku. W przypadku krótszych dokumwentów (np. wygenerowanych chunków) wskazane jest przechowywanie ich treśći bezpośrednio w DB
