@@ -36,5 +36,5 @@ coverage/
 tmp/
 temp/ 
 
-# qdrant
-qdrant_data/
+# docker volumes
+.volumes/

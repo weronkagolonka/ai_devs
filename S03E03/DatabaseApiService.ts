@@ -31,6 +31,16 @@ export class DatabaseApiService {
         return response.json() as Promise<QueryResponse>;
     }
 
+    async getUsers() {
+        const respnse = await this.query("select * from users;");
+        return respnse;
+    }
+
+    async getConnections() {
+        const queryResponse = await this.query("select * from connections;");
+        return queryResponse;
+    }
+
     async getTables() {
         const queryResponse = await this.query("show tables");
         return queryResponse;
