@@ -623,3 +623,105 @@ możliwe scenariusze:
 -   zapisywanie oryginalnej treści dokumentu oraz jego zmienionych form na wypadek potrzeby odwołania się do niej lub powtórzenia procesu przetwarzania
 -   zapisywanie info o dacie wygaśnięcia dokumentu, szczególnie w przypadku plików udostępnionych pod publicznym adresem URL
 -   powiązanier wpisu w DB z zawartościa pliku na dysku. W przypadku krótszych dokumwentów (np. wygenerowanych chunków) wskazane jest przechowywanie ich treśći bezpośrednio w DB
+
+## Bazy grafowe
+
+-   analiza zależności pomiędzy słowami i pojęciami
+-   dane w strukturze grafu
+    -   nodes (węzły/wierzchołki) - reprezentują obiekty
+    -   relationships/links/edges (krawędzie) - reprezentują zależności pomiędzy obiektami
+    -   labels
+    -   properties - kązdy węzeł i relacja mogą mieć wiele właściwości
+        wydajne przeszukiwanie i analiza zależności
+
+social graph - reprezentacja relacji między użytkownikami, np. Facebook
+
+-   co robią, lubią twoi znajomi
+    interest graph - reprezentacja zainteresowań użytkowników, np. TikTok
+-   zainteresowania użytkownika: użytkownik/treść, wymagające analizy treści
+
+relacyjna baza danych
+
+-   SQL, primary keys, łączenie tabel - szybko zapytanie może stać się bardzo skomplikowane
+    grafowa baza danych
+-   `cipher`, `neo4j`, relacje między węzłami
+    -   łatwiejsze zapytania, wydajniejsze przeszukiwanie
+
+### Sieci semantyczne
+
+-   słowo - węzęł
+    -   synonimy, antonimy, pojędzia podrzędne - krawędzie
+    -   pomaga w zrozumieniu znaczenia słów
+
+### Typy baz grafowych
+
+-   neo4j: język cipher, grafy
+-   arangoDB: multi-model, grafy, dokumenty, klucze-wartości, SQL-like
+-   janusGraph: skalowalność, do dużych zbiorów danych, złożone zależnośći
+    -   integracja z silnikami wyszukiwania
+-   Amazon Neptune: różne rodzaje grafów, integracja z AWS
+-   TigerGraph: szybkie analizy w czasie rzeczywistym, duża ilość danych bez utraty wydajności
+
+### Kiedy NIE używać baz grafowych
+
+-   gdy dane nie są gęsto powiązane - RDS jest wystarczające
+-   brak zaawansowanych analiz relacji: np. e-commerce, gdzie użytkownicy, produkty, itd. nie zależą tak bardzo od siebie; grafy mogą być przesadne
+-   wymagają zaawansowanej wiedzy i infrastruktury; dodatkowe koszty
+
+### zastosowanie baz grafowych w systemach RAG
+
+-   "tradycyjne" flow:
+    -   zapytanie -> embedding -> wyszukiwanie w bazie wektorowej -> znalezienie dodatkowego kontekstu w bazie relacyjnej lub noSQL na bazie wspólnego identyfikatora
+        -   dodajemy uzyskany kontekst do odpowiedzi
+-   problem pojawia się, gdy zapytanie dotyczy nie jednej, konkretnej rzeczy o danych cechach, lecz jakiegoś zbioru, które łączych zestaw określonych cech
+    -   np. "pokaż mi wszystkie książki, które są zarówno o historii, jak i napisane przez autora urodzonego w 1900 roku"
+    -   wówczas jest o wiele cięzej znaleźć takie wyniki w bazie relacyjnej na podstawie słów kluczowych albo dopasowania znaczenia
+
+Neo4j
+
+-   możliwość dodania vector indexu, który pozwala na przechowywanie embeddingu oraz przeszukiwanie dokumentów
+
+### Strukturyzowanie danych w bazie grafowej
+
+https://microsoft.github.io/graphrag/
+LangChain
+
+^ konwersja nieustrukturyzowanego tekstu na serię dokumentów oraz połączeń pomiędzy nimi
+
+Domyślne prompty służące do wypisywania podnmiotów i relacji, tworzeniu podsumowań, opisu stanu podmiotu, opisanie zależności pomiędzy podmiotami:
+https://microsoft.github.io/graphrag/prompt_tuning/overview/
+
+Aby uniknąć duplikacji danych związanych z dowonlnością tworzernia dokumentów, należy ustalić konkretną sciężkę uzwględniająca dostarczanie, organizację, odzyskiwanie i aktualizację treści
+
+-   Praca z bazą grafową opiera się o dwa etapy: strukturyzowania danych i ich późniejszego wyszukiwania.
+
+-   Dane na potrzeby bazy grafowej muszą zostać przekonwertowane na formę Node (Dokument) + Edge (Połączenie) z opisującymi je właściwościami.
+
+-   Transformacja zwykle będzie odbywać się z pomocą LLM i serii promptów odpowiedzialnych za pobieranie informacji oraz tworzenie powiązań.
+
+-   Ustrukturyzowane dane trafiają wówczas do bazy grafowej / indeksu wektorowego. Aktywność ta kończy etap strukturyzowania danych.
+
+-   Proces wyszukiwania/wczytywania informacji na potrzeby kontekstu dla LLM odbywa się na podobnych zasadach jak w przypadku bazy wektorowej czy klasycznych silników wyszukiwania. Jednak w tym przypadku celem jest wygenerowanie zapytania Cypher (lub serii zapytań) i połączenie danych w jeden kontekst.
+
+### Wyszukiwanie
+
+połączenie gotowej bazy grafowej z LLM
+
+wykorzystanie LLM do generowanie zapytań SQL/cipher - dobre na własny użytek, ale nie jest to dobry pomysł do przeszukiwania całych baz danych z powodu potencjalnego prompt injection
+
+model powinien wskazywać obszary i zapytania, które programistycznie przekształcimy na docelowe zapytania, narzucając przy tym własne ograniczenia, takie jak poziom uprawnień dostępu do wybranych danych
+
+E.G. `Neo4JService`- interfejs do komunikacji między bazą grafową a LLM
+
+-   model zwraca JSON, nie składnię Cypher, my dokonujemy transformacji danych programistycznie
+
+Krok po kroku (implementacja `GraphRAG`):
+
+1. Analiza zapytania: Jest to prompt decydujący o tym, jakie rodzaje akcji mają być podjęte (READ|WRITE|ANSWER) przez asystenta.
+2. Przypominanie: Jest to seria promptów, w przypadku której dochodzi do opisania strategii wyszukiwania oraz zapytań w celu wczytania danych do kontekstu
+3. Zapamiętanie: Jeśli model zdecyduje się na zapisanie informacji, to uruchamiany jest prompt opisujący nowy dokument oraz logika, która dodaje go do pamięci (w naszym przykładzie nie rozszerzałem go o tworzenie relacji pomiędzy dokumentami)
+4. Odpowiedź: Na podstawie pobranego kontekstu generowana jest odpowiedź
+
+koniecznie jest rozbudowanie go o logikę łączenia ze sobą rekordów, a także weryfikacji tego, czy rekordy nie są zduplikowane
+
+https://player.vimeo.com/video/1031968103?app_id=122963&referrer=https%3A%2F%2Fbravecourses.circle.so%2F

@@ -39,4 +39,9 @@ export const globalConfig = cleanEnv(process.env, {
     SEARCH_PEOPLE_URL: str(),
     SEARCH_PLACES_URL: str(),
     BARABARA_DATA_URL: str(),
+
+    // S03E05
+    NEO4J_URL: str(),
+    NEO4J_USERNAME: str(),
+    NEO4J_PASSWORD: str(),
 });

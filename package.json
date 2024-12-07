@@ -18,8 +18,8 @@
         "S03E01": "npx tsx S03E01/index.ts",
         "S03E02": "npx tsx S03E02/index.ts",
         "S03E03": "npx tsx S03E03/index.ts",
+        "S03E03-server": "npx tsx S03E03/server.ts",
         "S03E04": "npx tsx S03E04/index.ts",
-        "S03E04-server": "npx tsx S03E04/server.ts",
         "S03E05": "npx tsx S03E05/index.ts"
     },
     "keywords": [],
@@ -38,15 +38,16 @@
         "@types/decompress": "^4.2.7",
         "@types/unzipper": "^0.10.10",
         "body-parser": "^1.20.3",
+        "cheerio": "^1.0.0",
         "decompress": "^4.2.1",
         "dotenv": "^16.4.5",
         "envalid": "^8.0.0",
         "express": "^4.21.1",
-        "openai": "^4.71.1",
-        "unzipper": "^0.12.3",
-        "cheerio": "^1.0.0",
-        "path": "^0.12.7",
+        "mathjs": "^13.2.1",
+        "neo4j-driver": "^5.27.0",
         "ollama": "^0.5.9",
-        "mathjs": "^13.2.1"
+        "openai": "^4.71.1",
+        "path": "^0.12.7",
+        "unzipper": "^0.12.3"
     }
 }
