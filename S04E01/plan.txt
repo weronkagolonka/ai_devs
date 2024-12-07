@@ -1,0 +1,13 @@
+- photobot service
+    - get photos
+    - repair photo
+    - brighten photo
+    - darken photo
+- open AI
+    - decide whether the photo should be repaired | darkened | brightened - can use 50% resolution
+    - handle answer from photo bot - get link to photos
+    - decide which photo depicts a woman - can use 50% resolution
+    - create description of barbara
+
+TOMORROW
+- write prompts
