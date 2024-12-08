@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import { ArticleService } from "./ArticleService";
-import { globalConfig } from "../globalConfig";
+import { globalConfig } from "../common/globalConfig";
 import { OpenAiService } from "./OpenAiService";
 
 const main = async () => {

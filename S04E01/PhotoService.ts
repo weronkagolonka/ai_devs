@@ -1,5 +1,5 @@
-import { ReportAnswerRequest } from "../globalTypes";
-import { LocalJsonCache } from "../LocalJsonCache";
+import { ReportAnswerRequest } from "../common/globalTypes";
+import { LocalJsonCache } from "../common/LocalJsonCache";
 import { OpenAIService } from "./OpenAiService";
 import { classifyPhotoQualityPrompt } from "./prompts/classifyPhotoQualityPrompt";
 import { describeBarbaraPrompt } from "./prompts/describeBarbaraPrompt";

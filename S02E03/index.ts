@@ -1,7 +1,7 @@
 import OpenAI from "openai";
 import { OpenAIService } from "./OpenAiService";
 import { RobotService } from "./RobotService";
-import { globalConfig } from "../globalConfig";
+import { globalConfig } from "../common/globalConfig";
 import { compressRobotDescriptionSystemPrompt } from "./prompts";
 
 const main = async () => {

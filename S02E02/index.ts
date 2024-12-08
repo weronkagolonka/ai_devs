@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { globalConfig } from "../globalConfig";
+import { globalConfig } from "../common/globalConfig";
 import { OpenAIService } from "./OpenAiService";
 import { MapAnalyseService } from "./MapAnalyseService";
 import { describeMapsSystemPrompt, findCitySystemPrompt } from "./prompt";

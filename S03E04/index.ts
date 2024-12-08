@@ -1,5 +1,5 @@
-import { globalConfig } from "../globalConfig";
-import { ReportAnswerRequest } from "../globalTypes";
+import { globalConfig } from "../common/globalConfig";
+import { ReportAnswerRequest } from "../common/globalTypes";
 import { OpenAiService } from "./OpenAiService";
 import { SearchService } from "./SearchService";
 import { OpenAI } from "openai";

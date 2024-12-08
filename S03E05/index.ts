@@ -1,10 +1,10 @@
 import { PathSegment } from "neo4j-driver";
-import { globalConfig } from "../globalConfig";
+import { globalConfig } from "../common/globalConfig";
 import { DatabaseApiService } from "../S03E03/DatabaseApiService";
 import { constants } from "./constants";
 import { Neo4JService } from "./Neo4jService";
 import { Connection, User } from "./types";
-import { ReportAnswerRequest } from "../globalTypes";
+import { ReportAnswerRequest } from "../common/globalTypes";
 
 const main = async () => {
     const dbApiService = new DatabaseApiService(

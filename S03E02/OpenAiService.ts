@@ -1,7 +1,7 @@
 import OpenAI from "openai";
 import fs from "fs";
 import unzipper from "unzipper";
-import { globalConfig } from "../globalConfig";
+import { globalConfig } from "../common/globalConfig";
 import { WeaponTestEmbedding } from "./types";
 
 export class OpenAiService {

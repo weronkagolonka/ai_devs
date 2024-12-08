@@ -1,4 +1,4 @@
-import { globalConfig } from "../globalConfig";
+import { globalConfig } from "../common/globalConfig";
 import fs from "fs";
 import OpenAI from "openai";
 import { OpenAIService } from "./OpenAIService";

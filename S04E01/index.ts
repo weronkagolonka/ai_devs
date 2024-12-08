@@ -1,11 +1,11 @@
 import OpenAI from "openai";
-import { globalConfig } from "../globalConfig";
+import { globalConfig } from "../common/globalConfig";
 import { PhotoService } from "./PhotoService";
 import { OpenAIService } from "./OpenAiService";
-import { LocalJsonCache } from "../LocalJsonCache";
+import { LocalJsonCache } from "../common/LocalJsonCache";
 import { constants } from "./constants";
 import { PhotoLinks, PhotoQualityClassification } from "./types";
-import { ReportAnswerRequest } from "../globalTypes";
+import { ReportAnswerRequest } from "../common/globalTypes";
 import { re } from "mathjs";
 import { ReportService } from "../ReportService";
 

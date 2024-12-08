@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { globalConfig } from "../globalConfig";
+import { globalConfig } from "../common/globalConfig";
 import { OpenAiService } from "./OpenAiService";
 import { FileService } from "./FileService";
 
