@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { globalConfig } from "../globalConfig";
+import { globalConfig } from "../common/globalConfig";
 import { getAnswer, initVerification, verify } from "./requests";
 
 const main = async () => {

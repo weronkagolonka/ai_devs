@@ -4,7 +4,7 @@ import {
     logIn,
 } from "./requests.js";
 import OpenAI from "openai";
-import { globalConfig } from "../globalConfig.js";
+import { globalConfig } from "../common/globalConfig.js";
 
 const main = async () => {
     const openAiClient = new OpenAI({

@@ -1,4 +1,4 @@
-import { globalConfig } from "../globalConfig";
+import { globalConfig } from "../common/globalConfig";
 import decompress from "decompress";
 import OpenAI from "openai";
 import { OpenAiService } from "./OpenAiService";

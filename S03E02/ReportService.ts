@@ -1,6 +1,6 @@
 import unzipper from "unzipper";
 import { ReportAnswerRequest } from "./types";
-import { globalConfig } from "../globalConfig";
+import { globalConfig } from "../common/globalConfig";
 
 export class ReportService {
     private downloadFilesEndpointUrl: string;

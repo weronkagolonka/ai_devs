@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import { OpenAiService } from "./OpenAiService";
-import { globalConfig } from "../globalConfig";
+import { globalConfig } from "../common/globalConfig";
 import { CalibrationService } from "./CalibrationService";
 
 const main = async () => {

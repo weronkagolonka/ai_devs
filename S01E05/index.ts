@@ -1,5 +1,5 @@
 import { AnonimisationService } from "./AnonimisationService";
-import { globalConfig } from "../globalConfig";
+import { globalConfig } from "../common/globalConfig";
 import { LocalLlamaService } from "./LocalLlamaService";
 import { systemPrompt } from "./prompt";
 
