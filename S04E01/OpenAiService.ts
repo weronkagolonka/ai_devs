@@ -9,25 +9,38 @@ export class OpenAIService {
         this.openAiClient = openAI;
     }
 
-    async getCompletion(input: string | string[], prompt: string) {
-        const userMessage: ChatCompletionUserMessageParam =
-            input instanceof Array
-                ? {
-                      role: "user",
-                      content: input.map((i) => ({
-                          image_url: {
-                              url: i,
-                          },
-                          type: "image_url",
-                      })),
-                  }
-                : {
-                      role: "user",
-                      content: input,
-                  };
+    /**
+     *
+     * @param input A text query or an array of image URLs
+     * @param prompt A system prompt
+     * @returns Completion response
+     */
+    async getCompletion(
+        input: string[],
+        images: boolean,
+        prompt: string,
+        model: string = "gpt-4o-mini"
+    ): Promise<OpenAIResponse> {
+        const userMessage: ChatCompletionUserMessageParam = images
+            ? {
+                  role: "user",
+                  content: input.map((i) => ({
+                      image_url: {
+                          url: i,
+                      },
+                      type: "image_url",
+                  })),
+              }
+            : {
+                  role: "user",
+                  content: input.map((i) => ({
+                      text: i,
+                      type: "text",
+                  })),
+              };
 
         const response = await this.openAiClient.chat.completions.create({
-            model: "gpt-4o-mini",
+            model: model,
             messages: [
                 {
                     role: "system",
