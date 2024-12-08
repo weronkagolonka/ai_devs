@@ -3,3 +3,8 @@ export type ReportAnswerRequest = {
     apikey: string;
     answer: string | any[] | object;
 };
+
+export type ReportAnswerResponse = {
+    code: number;
+    message: string;
+};

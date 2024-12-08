@@ -724,4 +724,28 @@ Krok po kroku (implementacja `GraphRAG`):
 
 koniecznie jest rozbudowanie go o logikę łączenia ze sobą rekordów, a także weryfikacji tego, czy rekordy nie są zduplikowane
 
-https://player.vimeo.com/video/1031968103?app_id=122963&referrer=https%3A%2F%2Fbravecourses.circle.so%2F
+## Interfejs
+
+Narzędzia dla agentów nie powinny realizować krytycznych procesów, ich kontakt ze światem zewnętrznym powinien być możliwie ograniczony, a podejmowane akcje odwracalne.
+
+### Narzędzia dla LLM
+
+-   jego nazwa musi być oczywista, zwięzła, unikatowa i charakterystyczna, aby model mógł z wysoką pewnością stwierdzić, które narzędzie wybrać spośród dostępnej listy umiejętności
+-   każde narzędzie powinno zawierać zwięzły opis - umożliwia wybór oraz przedstawai możliwości i ograniczenia
+-   narzędzie musi posiadać instrukcję obsługi, która może mieć formę jednego/wielu promptów. Wynik - obiekt JSON/yaml zaweirający właściwości do uruchomienia funkcji
+-   narzędzie musi mieć zdefiniowaną strukturę danych wejściowych, zależności, danych wyjściowych oraz listę dostępnych akcji - możliwość korzystania w różnych konfiguracjach
+
+Aspekty związane z logiką używania narzędzia:
+
+-   zestawy danych testowych, testy autmatyczne dla wszystkich promptów
+-   zapisywanie historii podjętych działań, pozwalających na wczytanie zapytania oraz wyników dla danej konwersacji
+-   obsługa błędów z opcją automatycznewgo naprawienia
+-   system wykonywania akcji asynchronicznych (kolejka, eventy, harmonogram)
+
+Narzędzie - niezależny moduł aplikacji, którym może posługiwać się LLM.
+
+### Interfejs narzędzi
+
+-   narzędzia są uruchamiane przez model indywidualnie, ale także w połączeniu
+    -   np. agent otrzymuje polecenie "Codziennie rano wejdź na stronę X, napisz streszczenie ich treści i wyślij mi na maila"
+        -   model ustala plan akcji i wykonuje je
