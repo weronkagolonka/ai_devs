@@ -128,24 +128,6 @@ export class PhotoService {
         }
     }
 
-    async classifyPhotosContent(photoLinks: string[]) {
-        const classifications = await Promise.all(
-            photoLinks.map(async (photoLink) => {
-                const classification = await this.openAiService.getCompletion(
-                    [photoLink],
-                    true,
-                    "TODO"
-                );
-                return {
-                    photoLink: photoLink,
-                    isWoman: classification.answer === "true" ? true : false,
-                } as PhotoContentClassification;
-            })
-        );
-
-        return classifications;
-    }
-
     async getBarbaraDescription(photoLinks: string[]) {
         const description = await this.openAiService.getCompletion(
             photoLinks,
