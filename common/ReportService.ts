@@ -1,8 +1,5 @@
-import { globalConfig } from "./common/globalConfig";
-import {
-    ReportAnswerRequest,
-    ReportAnswerResponse,
-} from "./common/globalTypes";
+import { globalConfig } from "./globalConfig";
+import { ReportAnswerRequest, ReportAnswerResponse } from "./globalTypes";
 
 export class ReportService {
     async reportAnswer(

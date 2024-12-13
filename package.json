@@ -21,7 +21,9 @@
         "S03E03-server": "npx tsx S03E03/server.ts",
         "S03E04": "npx tsx S03E04/index.ts",
         "S03E05": "npx tsx S03E05/index.ts",
-        "S04E01": "npx tsx S04E01/index.ts"
+        "S04E01": "npx tsx S04E01/index.ts",
+        "S04E02": "npx tsx S04E02/index.ts",
+        "S04E02-fine-tuning": "npx tsx S04E02/fine-tuning.ts"
     },
     "keywords": [],
     "author": "",
