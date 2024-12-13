@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import { constants } from "./constants";
+import { globalConfig } from "../common/globalConfig";
 
 export class OpenAiService {
     private openAi: OpenAI;
@@ -10,7 +11,7 @@ export class OpenAiService {
 
     async fineTunedCompletion(query: string) {
         const response = await this.openAi.chat.completions.create({
-            model: constants.MODEL,
+            model: globalConfig.FINE_TUNED_MODEL,
             messages: [
                 {
                     role: "system",
