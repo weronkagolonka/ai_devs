@@ -1,4 +1,3 @@
-import { dir } from "console";
 import unzipper from "unzipper";
 
 export class ZipService {
