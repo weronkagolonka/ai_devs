@@ -749,3 +749,8 @@ Narzędzie - niezależny moduł aplikacji, którym może posługiwać się LLM.
 -   narzędzia są uruchamiane przez model indywidualnie, ale także w połączeniu
     -   np. agent otrzymuje polecenie "Codziennie rano wejdź na stronę X, napisz streszczenie ich treści i wyślij mi na maila"
         -   model ustala plan akcji i wykonuje je
+
+## Fine-tuning modelu
+
+-   celowe modyfikowanie modelu
+-   halucynowanie modelu w takim kierunku, jakim chcemy

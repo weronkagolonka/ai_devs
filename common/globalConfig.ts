@@ -44,4 +44,7 @@ export const globalConfig = cleanEnv(process.env, {
     NEO4J_URL: str(),
     NEO4J_USERNAME: str(),
     NEO4J_PASSWORD: str(),
+
+    // S04E02
+    FINE_TUNED_MODEL: str(),
 });
