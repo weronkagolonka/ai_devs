@@ -750,7 +750,58 @@ Narzędzie - niezależny moduł aplikacji, którym może posługiwać się LLM.
     -   np. agent otrzymuje polecenie "Codziennie rano wejdź na stronę X, napisz streszczenie ich treści i wyślij mi na maila"
         -   model ustala plan akcji i wykonuje je
 
-## Fine-tuning modelu
+## Zewnętrzne źródła danych
 
--   celowe modyfikowanie modelu
--   halucynowanie modelu w takim kierunku, jakim chcemy
+-   źródła danych, które są pobierane w programistyczny sposób, a nie są podawane przez użytkownika, np. muzyka, pogoda, lokalizacja
+    -   pobierane w czasie rzeczywistym lub aktualizowane cyklicznie i wczytywane w razie potrzeby
+    -   dane dostarczane przez użytkownika lub innych agentów AI w trakcie interakcji
+
+### Pliki
+
+-   model nie ma problemu z generowaniem treści dla dokumentów tekstowych. `Markdown`, `JSON` czy `CSV` mogą być także programistycznie przekonwertowane na formaty binarne, takie jak `PDF`, `docx` czy `xlsx`
+    -   samo umieszczenie pliku na dysku oraz wygenerowanie linku do niego wymaga narzędzia
+
+Dwa sposoby tworzenia pliku
+
+-   jeden dostępny dla użytkownika, drugi dla modelu
+    -   upload dla modelu: wczytanie pliku jako dokumentu i zapisanie w bazie danych, dodanie ID konwersacji do metadanych pliku
+        -   odpowiedź zwraca informacje nt. pliku, łącznie z adresem URL, którym może posłużyc się LLM
+        -   produkcyjna implementacja:
+            -   trzeba sprawdzać mimeType wgrywanego pliku i odrzucamy te, które są niezgodne ze wspieranymi formatami
+            -   sprawdzanie rozmiaru pliku
+            -   link kierujący do pliku powinien wymagać uwierzytelnienia, np. klucza API lub aktywnej sesji
+
+Tworzenie pliku za pomocą LLM
+
+-   musimy uwzględnić napisanie treści
+    -   jeśli zapisanym plikiem jest np. wygenerowane tłumaczenie, wolelibyśmy uniknąć ponownego przepisywania dokumentu
+-   generowanie nazwy + wskazanie ID wczytywanej treści, które jest np. wynikiem tłumaczenia
+
+### Planowanie
+
+posługiwanie się narzędziami przez LLMy - programistyczny interfejs + prompty
+logika może mieć charakter liniowy lub bardziej agencyjny, zdolny do wychodzenia poza ustalony schemat i rozwiązywania porblemów z kategorii "open-ended"
+
+scenariusz środkowy
+
+-   model wyposażony w narzędzia ma możlwiość korzystania z nich w dowolnej kolejności oraz ilości kroków
+    -   nie może zmienić raz ustalonego planu oraz wracać do wcześniejszych kroków
+    -   brak odporności na nieprzewidziane scenariusze - polecenia muszą być precyzyjne
+    -   model taki nie sprawdzi się produkcyjnie, ale może pracować "w tle" i zapisywać efekty swojej pracy w DB i np. wysyłać na maila
+-   ograniczona wiedza początkowa - nie możemy od razu wygenerować wszystkich paramtetrów potrzebnych do uruchomienia narzędzi
+    -   ustalenie listy kroków; zapisanie notatek lub zapytań, które mają charakter poleceń jakie model generuje "Samemu sobie" - należy zachować kolejnośc działań
+    -   dopóki modele nie będą dysponowały większą zdolnością do zachowania uwagi, proces planowania i podejmowania działań musi ybć podzielony na małe, wyspecjalizowane prompty
+        -   problemem jest dostarczenie wszystkich danych potrzebnych do podjęcia dalszych działań bez dodwania zbędnego "szumu"
+
+zapisywanie dokumentów w DB z metadanymi, które zawierają szczegółowe informacje o dokumencie
+
+-   metadane nadają kontekst
+-   takie informacje mogę być przywołane w każdej chwili do kontekstu promptu systemowego wraz z informacją skąd pochodzą oraz gdzie możemy się dowiedzieć więcej na ich temat
+-   w taki sposób można zapisywać dane z zewnętrznych źródeł, a następnie wczytywać do konwersacji w formie "stanu" - obiektu stanowiącego pamięć krótkoteterminową modelu
+    -   stan może zawierać:
+        -   kontekst (umiejętności, info z otoczenial lista podjętych akcji, wczytanych dokumentów, podsumowanie rozmowy, omawiane słowa kluczowe, wczytane wspomnienia)
+        -   informacje związane z rozumowaniem (akutalny status, dostępne kroki, aktualny plan działań, refleksja na jego temat, aktywne narzędzie)
+        -   informacje nt. konwersacji (ID interakcji na potrzeby LangFuse, ID rozmowy, lista wiadomości, związane z nią ustawienia)
+
+KONTEKST: wiedza z bieżącej interakcji, wiedza z pamięci długoterminowej, zmienne kontrolujące logikę po stronie programistycznej
+WYMAGANIA: precyzyjne określenie, co jest dla modelu dostępne, a co nie - w przeciwnym razie szybko poajwią się problemy dotyczące samego modelu, albo barier wynikających z samej technologii (np. koniecznośc logowania na stronę www)
