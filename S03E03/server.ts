@@ -1,7 +1,7 @@
 import bodyParser from "body-parser";
 import { DatabaseApiService } from "./DatabaseApiService";
-import { config } from "./config";
 import express from "express";
+import { globalConfig } from "../common/globalConfig";
 
 const app = express();
 const port = 3000;
@@ -9,8 +9,8 @@ const port = 3000;
 app.use(bodyParser.json());
 
 const databaseApiService = new DatabaseApiService(
-    config.API_ENDPOINT_URL,
-    config.USER_API_KEY
+    globalConfig.DB_API_URL,
+    globalConfig.USER_API_KEY
 );
 
 app.post("/query", async (req, res) => {

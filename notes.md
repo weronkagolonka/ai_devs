@@ -805,3 +805,75 @@ zapisywanie dokumentów w DB z metadanymi, które zawierają szczegółowe infor
 
 KONTEKST: wiedza z bieżącej interakcji, wiedza z pamięci długoterminowej, zmienne kontrolujące logikę po stronie programistycznej
 WYMAGANIA: precyzyjne określenie, co jest dla modelu dostępne, a co nie - w przeciwnym razie szybko poajwią się problemy dotyczące samego modelu, albo barier wynikających z samej technologii (np. koniecznośc logowania na stronę www)
+
+## Aplikacje i usługi
+
+-   API aplikacji zewnętrznych mogą być wykorzystywane jako źródło danych, ale także jaako narzędzie do podejmowania działań
+    -   połaczenie modelu ze światem zewnętrznym, np: Google Maps, Spotify, Resend, Speak
+-   Narzędzia te mogą nie tylko odczytywać dane, ale także ja zapisywać, np. wysłać maila
+    -   należy na nie nakładać programistyczne ograniczenia aby przechwycić ewentualne błędy lub do nich nie dopuścić
+-   integrację z zewnętrznymi narzędziami należy rozważyć w oparciu o nieterministyczną naturę modeli językowych - jeśli zależy nam na precyzji, modele nie będą się do tego nadawać; czasem jednak niedeterministyczne odpowiedzi mogą stanowić wartość
+-   należy ograniczyć uprawnienia modelu do tylko tych koniecznych - least privilege principle
+
+### Interfejs dla narzędzi zewnętrznych
+
+-   input/output: struktury dokumentów (treść + metadane) - spójność pomiędzy narzędziami
+-   dane w postaci dokumentu mogą być zwracane zarówno w przypadku powodzenia jak i błędu - agent otrzymuje informacje, iż opreacja się nie powiodła, szczegóły błędu, co może doprowadzić do auotmatycznego rozwiązania
+
+### Narzędzia no-code
+
+-   tworzenie automatyzacji składającej się z kilku narzędzi i wyeksponowanym webhookiem
+-   oszczędność czasu: programistyczne zaimplemntowanie intgeracji z kilkoma narzędziami zewnętrznymi jest czasochłonne
+-   łatwość w edytowaniu logiki
+-   umożlwia zaangażowanie osób niebędących programistami w tworzenie automatyzacji
+-   jednorazowe rozwiązanie, PoC, prototypy
+-   niemożność utrzytmywania integracji, np. zmieniające się API
+
+Coraz częściej jednak LLMy poazwalają na samodzielne wygeenrowanie kodu służacego do integracji, co sprawia, że korzyci z narzędzi no-code stają się coraz mniejsze
+
+Polecenia do integracji zewnętrznych będą zazwyczaj mało precyzyjne. Dlatego przy tworzeniu agenta, należy roważyć zapisywanie danych w formie dokumentów, same zpaytania oraz scenariusze, które będą obsługiwane - mowa o ogólnych zasadach, nie konkretnych przypadkach
+
+Zagraj ulubioną muzykę - agent sam zadaje sobie pytania nt. ulubionej muzyki użytkowenika, nie ma za zadanie się tego dowiedzieć, lecz sam spekuluje na ten temat Spekulacyjne zadawanie pytań - **Speculative RAG** - próba doszacowania nieścisłości oraz odnalezienia brakującyh informacji. LLM może sam pomóc w generalizacji oraz określeniu schematów.
+
+-> System sam musi dążyć do odkrycia/zdobycia brakujących informacji, korzystając z pamięci długoterminowej i/lub zewnętrznych usług
+-> Rozwiązywanie problemów powinno opierać się na schematach, zasadach i regułach, a nie na pojedynczych przypadkach - nie da się ich wszystkich zaadresować
+
+### Wysyłanie wiadomości
+
+Wysyłanie wiadomności prywatnych lub SMS, których treść tworzy LLM prawie nigdy nie jest dobrym pomysłem.
+
+Część zadań agenta jest asynchroniczna i może zajmować kilkanaście minut lub kilka godzin - wśród nich są akcje uruchamiane w odpowiedzi na zdarzenie lub ustaloną porę. Warto wówczas rozważyć integrację z API do SMSów, maili transkajcyjnych czy komunikaotrów typu Slack.
+
+Usługi te jednak nie powinny być wykorzystywane do przesyłania masowych wiadomości. Lista kontaktów powinna być ograniczona lub wprost ustawiona tylko na nasz adres.
+
+Poza limitami, największym wyzwaniem jest sprawienie, żeby LLM był w stanie wygenerować treść, która będzie wartościowa, co jest dość trudne.
+
+Seria promptów może wspomóc skomponowanie bardziej wartościowej wiadomości, kolejną opcją jest wykorzystanie szablonów HTML do przygotwania np. neswlettera.
+
+-   przesyłanie wiadomości z pomocą komunikatorów lub maila powinno być możliwe, ale mocno ograniczone. LLM decydujący się na wysłanie prywatnej wiadomości na przypadkowy adres to dość prawdopodobny scenariusz
+-   formatowanie i zapis treści powinien być dopasowany z pomocą promptów oraz przykładów, które możliwie ograniczą domyślne zachowanie modelu zwiazane z genrowaniem bardzo ogólnych treści
+-   nie mamy możliwości wprowadzania poprawek w wiadomościach - prompt musi być bardzo precyzyjny i dopasowany
+
+Odpowiedź - dokument z treścią wiadomości + status akcji i ewentualna notka o niepowodzeniu
+
+### Rozrywka
+
+-   nie zawsze integracja będzie ustandaryzowana o interfejsy i gotowe do użycia API.
+-   czasem potrzebne są "kreatywne" rozwiązania
+-   przykład: powiadomienie w postaci komunikatu głosowego uruchamianego na komputerze.
+    -   skrypt bash + polecenia `say` na MacOS"
+-   spotify: polecenie głosowe typu "puść piosenkę ze shreka". Model wyszukuje tytuł piosenki, a następnie korzysta z API spotify, aby ją zagrać.
+
+### Good practices
+
+-   Ważna jest pośrednia warstwa abstrakcji między zewnętrznymi źródłami dannych a LLM
+-   jeden prompt - jeden problem: podzielenie zadania na mniejsze części
+-   generalizacja problemu: nie należy naprawiać promptu/integracji w oparciu o pojedyncze przypadki
+-   pomoc modelu: w planowanie, pisaniu kodu, promptów, generowaniu danych testowych, debugowaniu
+-   seria akcji: projektuj narzędzia tak, aby móc wykonywać kilka akcji jednocześnie - większa efektywność
+-   wspólny interfejs: możliwość podłączenia wielu narzędzi, po które model może sięgać, gdy to koniecznie
+-   komplet informacji: narzędzia powinny zwracać komplet informacji nt. pozyskanych danych lub błędów - w przeciwnym wypadku agent nie będzie potrafił się nimi posługiwać
+-   ograniczenia: odciążanie modelu z podejmowania decyzji powinno być priorytetem - z uwagi na stabliność systemu, a także wydajność
+-   ułatwienia: tam, gdzie to możliwe, warto stosować ułatwieniaw postaci np. narzędzi no-code, albo gotowych rozwiązań - pozwala skupić się na innych obszarach
+-   obserwowanie: logowanie, zapisywanie kroków w bazie danych - dotęp do tych informacji powinien mieć zarówno człowiek jak i sam system
+    -   zgromadzone dane moźna z czasem wykorzystać do budowania danych testowych oraz dalszego kształtowania promptów
