@@ -24,7 +24,8 @@
         "S04E01": "npx tsx S04E01/index.ts",
         "S04E02": "npx tsx S04E02/index.ts",
         "S04E02-fine-tuning": "npx tsx S04E02/fine-tuning.ts",
-        "S04E03": "npx tsx S04E03/index.ts"
+        "S04E03": "npx tsx S04E03/index.ts",
+        "S04E04": "npx tsx S04E04/index.ts"
     },
     "keywords": [],
     "author": "",
