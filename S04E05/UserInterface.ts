@@ -28,10 +28,6 @@ export class UserInterface {
     }
 
     async exec(pdfContent: PdfDocumentContent) {
-        // a list of PDF pages, where a page is a markdown string with image descriptions
-        // get embeddings of the pages and save in the qdrant db if not already present
-
-        // question/answers loop
         console.log("Donwloading questions...");
         const quetionResponse = await fetch(
             `https://centrala.ag3nts.org/data/${globalConfig.USER_API_KEY}/notes.json`
@@ -39,7 +35,6 @@ export class UserInterface {
         const questionData = (await quetionResponse.json()) as Questions;
         console.log(`Questions:\n${JSON.stringify(questionData)}\n`);
 
-        // send all questions at once and get all answers
         let counter = 1;
 
         console.log(`Answering questions, attempt ${counter}`);
@@ -62,7 +57,6 @@ export class UserInterface {
             hint: "",
         };
 
-        // report
         while (reportResponse.code !== 0) {
             counter++;
             console.log(
