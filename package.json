@@ -25,7 +25,8 @@
         "S04E02": "npx tsx S04E02/index.ts",
         "S04E02-fine-tuning": "npx tsx S04E02/fine-tuning.ts",
         "S04E03": "npx tsx S04E03/index.ts",
-        "S04E04": "npx tsx S04E04/index.ts"
+        "S04E04": "npx tsx S04E04/index.ts",
+        "S04E05": "npx tsx S04E05/index.ts"
     },
     "keywords": [],
     "author": "",
@@ -39,8 +40,10 @@
         "typescript": "^5.6.3"
     },
     "dependencies": {
+        "@opendocsg/pdf2md": "^0.2.1",
         "@qdrant/qdrant-js": "^1.12.0",
         "@types/decompress": "^4.2.7",
+        "@types/sharp": "^0.31.1",
         "@types/unzipper": "^0.10.10",
         "body-parser": "^1.20.3",
         "cheerio": "^1.0.0",
@@ -53,6 +56,9 @@
         "ollama": "^0.5.9",
         "openai": "^4.71.1",
         "path": "^0.12.7",
+        "pdf2json": "^3.1.4",
+        "pdfjs-dist": "^4.9.155",
+        "sharp": "^0.33.5",
         "unzipper": "^0.12.3"
     }
 }
