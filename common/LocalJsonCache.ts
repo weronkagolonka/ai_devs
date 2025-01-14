@@ -34,7 +34,7 @@ export class LocalJsonCache {
      * Overwrites existing cache file
      */
     updateExistingFile<T>(filePath: string, data: T) {
-        fs.truncateSync(filePath);
+        fs.truncateSync(`${this.storageDirectory}/${filePath}`);
         fs.writeFileSync(
             `${this.storageDirectory}/${filePath}`,
             JSON.stringify(data),

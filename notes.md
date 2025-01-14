@@ -877,3 +877,94 @@ Odpowiedź - dokument z treścią wiadomości + status akcji i ewentualna notka 
 -   ułatwienia: tam, gdzie to możliwe, warto stosować ułatwieniaw postaci np. narzędzi no-code, albo gotowych rozwiązań - pozwala skupić się na innych obszarach
 -   obserwowanie: logowanie, zapisywanie kroków w bazie danych - dotęp do tych informacji powinien mieć zarówno człowiek jak i sam system
     -   zgromadzone dane moźna z czasem wykorzystać do budowania danych testowych oraz dalszego kształtowania promptów
+
+## Mechaniki obsługi narzędzi
+
+Sugestie do buodwy średnio zaawansowanego agenta zdolnego do realizowania wileoetapowych zadań
+
+Pojedyncze żądania HTTP vs złożone zadania składające się z wielu kroków - potrzeba logiki pozwalającej na planowanie zadań, uruchamianie ich wg harmonogramu oraz wznawianie tych, które nie zostały poprawnie zakończone bez koniecznośći uruchamiania wszystkiego od początku.
+
+Podejście podobne do (lub bazujące na) `event driven design` - kolejkowanie zadań i przetwarzania rozbudowanych zadań w tle.
+
+-   komunikacja w czasie rzeczywistym
+-   możliwość łatwego informowania o postępach oraz w pełni asyncrhonicznej komunikacji
+-   początek - tworzenie listy zadań + akcje związane z dokumentami
+
+### Struktura danych
+
+-   _Historia_ konwersacji przypisanych do użytkownika
+-   _Lista wiadomości_ - powiązane z konwersacją oraz z dokumentami
+-   _Zadania_ - powiązane z konwersacją oraz listą akcji
+-   _Akcje_ - powiązane z narzędziami oraz dokumentami
+
+Zapisywanie interakcji z modelem, uzwględniając także podejmowane działania.
+Nie chodzi tu o observability, lecz zapis działań potrzebnych dla sterowania logiką agenta.
+
+### Odpowiedzialność modelu
+
+-   powinna być ograniczona wyłącznie do zadań, których nie da się wykonać programistycznie, reszta powinna być w kodzie, np.
+    -   domyślne wartości
+    -   weryfikacja (klasyfikacja - czy zwrócona nazwa jest jedną z dopuszczalnych wartości)
+    -   referencja - wskazanie potrzebnego zasobu zamiast przepisywanie treści
+    -   pętle - ograniczenie samozapętleniu
+    -   kontekst - sposób prezentacji dokumentów do wczytywania w kontekście, zakres uwzględnianych wartości
+        w sumie - minimalizowanie zaangażowania modelu
+
+### Posługiwanie się narzędziami
+
+-   kontrola instrukcji: dane wejściowe użytkownika są zwykle nieprecyzyjne - warto "wzbogacać" zapytania użytkownika, dopytywać o szczegóły lub ograniczyć kontakt z modelem do minimum
+-   kompresja: ograniczenie szumu treśći: podział na `task`> `action`> `tool` oraz relajca `action`> `documents` zapewnie elastyczny dostęp do danych i kontrolę nad szczegółami. Zadanie można opisać używając tylko naz zadania, akcji i kategorii, lub rozszerzy o opisy, kontekts i powiązania.
+-   wznawanie: task jak i action powinny posiadać statusy, które umozliwiają reagowanie na problemy i kontynuację w miejscu wytępowania błędu - np. rekacja automatyczna, gdzie model decyduje sam decyduje o korekcie danych wejściowych
+    -   ważne są programistyczne limity, retry limit
+-   pamięc podręczna - część akcji jest powtarzalna i czasem nie będzie potrzeby powtarzać ich od początku. Zapytania jednak nie będą takie same, nie można ich ze sobą porównać.
+    -   warto rozważyć tzw. `semantic cache` polegający na indeksowaniu zapytań użytkownika i przesuzkiwania w cleu znalezienia podobnych
+-   podział - podział zadań na akcje pozwala wyróżnić bardzo małe, pojedyncze aktywności, na których model może się skupić.
+    -   detal wpływające na skuteczność systemu - zmniejsza ryzyko rozproszenia uwagi modelu.
+    -   np. łatwiej jest wygenerować kilka mniejszych obiektów JSON i połączenia ich programistycznie niż jednego, bardzo zagnieżdżonego
+-   weryfikacja - na etapie task i action możemy dodać prompty weryfikujące to, czy odpowiedź modelu jest poprawna
+    -   weryfikacja jest prostsza niż generowanie
+
+### Oczekiwanie na odpowiedź
+
+-   asynchroniczne: użytkownik otrzymuje potwierdzenie rozpoczęcia zadania, następnie rezultat zostaje dosarczony później mailem lub innym kanałem
+    -   można wykorzystać web socket i innych do aplikacji real-time
+-   _użytkownik nie ma problemu z oczekiwaniem, jeśli widzi postęp_: np. wieloetapowy proces rejestracji z widocznym paskiem postępu
+-   warto wyświetlać aktualne postępy w generatywnych aplikacjach o złożonych zadaniach
+
+### Kolejkowanie zapytań
+
+-   niemal każde zewnętrzne API posiada rate limit
+    -   modele językowe - liczba zapytań, liczba tokneów / min, dzień, liczba tokenów wejściowych/wyjściowych; sam budżet
+-   roziwązanie: bilbioteki (Vercel AI SDK, LangFuse) lub własna logika do kontrolowania liczby zapytań otaz oczekiwania na ponowną dostępność usługi (serwis LLM może być niedostępny)
+-   OpenAI, Anthropic określają limity zapytań w nagłówkach
+-   mechanizm kolejki: błędy niezwiązane z limitem API, lecz jego dostępnością, błędnie wygenerowanych obiektem żądania
+    -   ustawienie liczby prób (retry limit) niezależnie od rodzaju błędu
+
+### Specjalizacja/generalizacja
+
+Tradycyjne programowanie - deterministyczne rozwiązania - opisanie w kodzie wszystkich możliwych scenariuszy - oczekiwania pracodawców, klientów i użytkowników są także deterministyczne
+
+-   generatywne aplikacje nie są deterministyczne - operujemy w obszarze prawdopodobieństwa
+
+modele nie są w stanie autonomicznie wykonywać bardzo złożonych zadań na ten moment
+
+-   trudno swtorzyć system, który dopasuje się do organizacji, problemu, itd. bez rozbudowanego kontekstu, który nie jest znany z góry
+
+Mowa tu o **wąskiej specjalizacji**
+
+-   jednak system taki nie działą w oparciu o sztywne reguły, ale ogólne zasady opisujące dobieranie akcji i sposobu ich wykonania
+
+Połączenie specjalizacji i generalizacji - model, który potrafi wykonywać zadania w oparciu o ogólne zasady, ale jest dopasowany do konkretnego problemu. Wraz z rozwojem dziedziny, będziemy obserwować coraz większą autonomiczność tych systemów.
+
+Nie możemy podążać za schematami, które znamy z projektowania tradycyjnych aplikacji gdy pracujemy z LLM.
+
+### Zaangażowanie użytkownika
+
+-   _personalizacja_: dopasowanie się do użytkownika - dynamiczne fragmenty promptu (imię, nazwy projektów), budowanie pamięci długoterminoiwej, wyciąganie wniosków z interkacji, autonomiczne polepszanie promptów
+-   _transparentność_: czasem udostępnienie promptu systemowego może byc korzystne - pomaga lepiej zrozumieć działanie systemu, answet osobom nietechnicznym
+-   _przekierowanie_: podczas generowanie nowego dokumentu przez model, warto wygenerować link kierujący do niego - pozwala na szybką weryfikację odpowiedzi modelu
+-   _potwierdzenie_: model nie powininen być połączony bezpośrednio ze światem i np. publikowanie wpisów i komentarzy powinno byc niedostępne. W odpowiedz można dołączyć link pozwalający na szybkie potwierdzenie wygenerowanej treści, i dopiero wtedy ją opublikować. Potwierdzenie powinno być obsługiwane wyłącznie przez kod, nie model
+-   _odwoływanie się do samego siebie_: system powinien mieć możliwość korzystania z własnego API, wtym wpływania na elementy promptów, budowania dynamicznych narzędzi w środowisku typu "sandbox". Może to być także wydawanie sobie poleceń, dokładnie tak samo, jak robi to użytkownik
+-   _prośba o pomoc_: część narzędzi powinna umożliwiać "zawieszenie" wykonania do czasu uzyskania pomocy ze strony człowieka. Np. w przypadku braku dostępu do usługi lub przekroczeniu libczy dostępnych prób wykonania zadania
+
+-> dopasowywanie się do użytkownika, tworzyć dla niego wartość przy minimalizowaniu wymaganego zaangażowania z jego strony
